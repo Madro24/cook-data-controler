@@ -38,10 +38,24 @@
 	</dependencies>
 
 	<build>
+		<finalName>cook-data-controller</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<!-- Make this jar executable -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+				  <archive>
+					<manifest>
+						<!-- Jar file entry point -->
+						<mainClass>com.madro.cook.CookDataControllerApplication</mainClass>
+					</manifest>
+				  </archive>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

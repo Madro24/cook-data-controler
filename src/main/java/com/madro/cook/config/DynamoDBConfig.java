@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 
@@ -30,10 +31,14 @@ public class DynamoDBConfig {
     @Bean
 	public AmazonDynamoDB amazonDynamoDB(AWSCredentials amazonAWSCredentials) {
    
-		AmazonDynamoDB amazonDynamoDB = AmazonDynamoDBClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(amazonAWSCredentials)).withRegion("us-west-2").build();
+    	
+    		AmazonDynamoDBClientBuilder builder = AmazonDynamoDBClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(amazonAWSCredentials));
+    		
 		if (!StringUtils.isEmpty(amazonDynamoDBEndpoint)) {
-			amazonDynamoDB.setEndpoint(amazonDynamoDBEndpoint);
+			builder.setEndpointConfiguration(new EndpointConfiguration(amazonDynamoDBEndpoint, "us-west-2"));
+			//amazonDynamoDB.setEndpoint(amazonDynamoDBEndpoint);
 		}
+		AmazonDynamoDB amazonDynamoDB = builder.build();
 		return amazonDynamoDB;
 	}
 

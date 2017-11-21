@@ -14,6 +14,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.madro.cook.data.dynamodb.repositories.RecipeRepository;
 import com.madro.cook.models.Recipe;
 
@@ -21,49 +25,51 @@ import com.madro.cook.models.Recipe;
 @SpringBootTest(classes = CookDataControllerApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("local")
-@TestPropertySource(properties = { 
-  "amazon.dynamodb.endpoint=http://localhost:8000/", 
-  "amazon.aws.accesskey=test1", 
+@TestPropertySource(properties = {
+  "amazon.dynamodb.endpoint=http://localhost:8000/",
+  "amazon.aws.accesskey=test1",
   "amazon.aws.secretkey=test231" })
 public class RecipeInfoRepositoryIntegrationTest {
- 
-   // private DynamoDBMapper dynamoDBMapper;
- 
-   // @Autowired
-   // private AmazonDynamoDB amazonDynamoDB;
- 
+
+    private DynamoDBMapper dynamoDBMapper;
+
+    @Autowired
+    private AmazonDynamoDB amazonDynamoDB;
+
     @Autowired
     RecipeRepository repository;
- 
+
     private static final String EXPECTED_NAME = "Burrito";
     private static final String EXPECTED_TYPE = "Desayuno";
- 
+
     @Before
     public void setup() throws Exception {
-   /*     dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB);
-         
-        CreateTableRequest tableRequest = dynamoDBMapper
-          .generateCreateTableRequest(Recipe.class);
-        tableRequest.setProvisionedThroughput(
-          new ProvisionedThroughput(1L, 1L));
-        amazonDynamoDB.createTable(tableRequest);
-         
+        dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB);
+
+        try {
+	        	CreateTableRequest tableRequest = dynamoDBMapper
+	          .generateCreateTableRequest(Recipe.class);
+	        tableRequest.setProvisionedThroughput(
+	          new ProvisionedThroughput(1L, 1L));
+	        amazonDynamoDB.createTable(tableRequest);
+        }catch (Exception e) {}
+
         //...
- 
+
         dynamoDBMapper.batchDelete(
-          (List<Recipe>)repository.findAll());*/
+          (List<Recipe>)repository.findAll());
     }
- 
+
     @Test
     public void sampleTestCase() {
         Recipe dave = new Recipe(EXPECTED_NAME, EXPECTED_TYPE);
         repository.save(dave);
- 
-        List<Recipe> result 
+
+        List<Recipe> result
           = (List<Recipe>) repository.findAll();
-         
+
         assertTrue("Not empty", result.size() > 0);
-        assertTrue("Contains item with expected cost", 
+        assertTrue("Contains item with expected cost",
           result.get(0).getName().equals(EXPECTED_NAME));
     }
 }
